@@ -1,0 +1,25 @@
+
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push for the main branch
+  push:
+    branches: [ main ]
+
+jobs:         
+  # This workflow contains a single job to send the commit message to InsightFinder by Post request call
+  curl:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    steps:
+    - name: send deployment data
+      uses: dkershner6/post-api-call-action@v1
+      with:
+        # URL to send post request to
+        url: https://app.insightfinder.com/api/v1/deploymentEventReceive
+        # JSON string of data to pass into request, including the InsightFinder projectName, userName and the licenseKey
+        # In the deploymentData, you need to set the InstanceName, the timestamp and the data is auto generated
+        data: '{"projectName":"GitAction","userName":"cai", "licenseKey":"a5e1f48434ed2abcb5ac9b57a79c161a841927dd","deploymentData":[{"instanceName":"Test", "timestamp": "${{github.event.repository.pushed_at}}000", "data":${{toJSON(github.event.commits[0])}}}]}'
+        headers: '{"agent-type":"Stream"}'
